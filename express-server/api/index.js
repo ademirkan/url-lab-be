@@ -3,6 +3,7 @@ const app = express();
 require("dotenv").config();
 const mysql = require("mysql2");
 const { v4 } = require("uuid");
+const fs = require("fs");
 
 const db_config = {
     host: process.env.PLANETSCALE_DB_HOST,
