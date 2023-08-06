@@ -22,7 +22,10 @@ app.get("/:id", (req, res) => {
             if (results.length === 0) {
                 return res.status(404).json({ error: "URL not found" });
             }
-            res.redirect({ url: results[0].url });
+            console.log(results[0]); // Check the entire row's data
+            console.log(results[0].url); // Check the URL specifically
+
+            res.redirect(results[0].url);
         }
     );
 });
