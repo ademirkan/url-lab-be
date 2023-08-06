@@ -35,10 +35,12 @@ app.get("/:id", (req, res) => {
 
 app.post("/add-url", (req, res) => {
     const { url } = req.body;
+    console.log("here");
     if (!url) {
         return res.status(400).json({ error: "URL is required" });
     }
     const id = v4();
+    console.log(id);
     connection.query(
         "INSERT INTO urls (id, url) VALUES (?, ?)",
         [id, url],
