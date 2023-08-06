@@ -2,6 +2,7 @@ const app = require("express")();
 require("dotenv").config();
 const mysql = require("mysql2");
 const fs = require("fs");
+const { v4 } = require("uuid");
 
 const db_config = {
     host: process.env.PLANETSCALE_DB_HOST,
@@ -11,8 +12,6 @@ const db_config = {
 };
 
 const connection = mysql.createConnection(db_config);
-
-const { v4 } = require("uuid");
 
 app.get("/:url", (req, res) => {
     const { url } = req.params;
