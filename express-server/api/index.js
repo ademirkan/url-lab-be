@@ -3,10 +3,8 @@ const app = express();
 require("dotenv").config();
 const mysql = require("mysql2");
 const { v4 } = require("uuid");
-const fs = require("fs");
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
-
 connection.connect();
 
 app.use(express.json()); // middleware to parse JSON request body
@@ -29,14 +27,12 @@ app.get("/:id", (req, res) => {
     );
 });
 
-app.post("/add-url", (req, res) => {
-    const { url } = req.body;
-    console.log("here");
+app.post("/create-url", (req, res) => {
+    const { id, longUrl } = req.body;
     if (!url) {
         return res.status(400).json({ error: "URL is required" });
     }
-    const id = v4();
-    console.log(id);
+
     connection.query(
         "INSERT INTO urls (id, url) VALUES (?, ?)",
         [id, url],
@@ -45,7 +41,7 @@ app.post("/add-url", (req, res) => {
                 console.error(err);
                 return res.status(500).json({ error: "Internal Server Error" });
             }
-            res.json({ id: id });
+            res.redirect(url);
         }
     );
 });
