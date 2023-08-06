@@ -1,7 +1,7 @@
-const app = require("express")();
+const express = require("express");
+const app = express();
 require("dotenv").config();
 const mysql = require("mysql2");
-const fs = require("fs");
 const { v4 } = require("uuid");
 
 const db_config = {
@@ -13,27 +13,43 @@ const db_config = {
 
 const connection = mysql.createConnection(db_config);
 
-app.get("/:url", (req, res) => {
-    const { url } = req.params;
-    console.log("Connected to PlanetScale!");
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
-    res.status(301).redirect(`https://www.amazon.com/${url}`);
+app.use(express.json()); // middleware to parse JSON request body
+
+app.get("/:id", (req, res) => {
+    const { id } = req.params;
+    connection.query(
+        "SELECT url FROM urls WHERE id = ?",
+        [id],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ error: "URL not found" });
+            }
+            res.json({ url: results[0].url });
+        }
+    );
 });
 
-app.post("/:url", (req, res) => {
-    const { url } = req.params;
-    console.log("Connected to PlanetScale!");
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
-    // post to db
+app.post("/add-url", (req, res) => {
+    const { url } = req.body;
+    if (!url) {
+        return res.status(400).json({ error: "URL is required" });
+    }
     const id = v4();
-    const sql = `INSERT INTO urls (id, url) VALUES ('${id}', '${url}')`;
-    connection.query(sql, (err, result) => {
-        if (err) throw err;
-        console.log("1 record inserted");
-    });
-    res.status(301).redirect(`https://www.amazon.com/${url}`);
+    connection.query(
+        "INSERT INTO urls (id, url) VALUES (?, ?)",
+        [id, url],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+            res.json({ id: id });
+        }
+    );
 });
 
 module.exports = app;
