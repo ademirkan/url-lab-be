@@ -9,6 +9,9 @@ const db_config = {
     user: process.env.PLANETSCALE_DB_USERNAME,
     password: process.env.PLANETSCALE_DB_PASSWORD,
     database: process.env.PLANETSCALE_DB,
+    ssl: {
+        ca: fs.readFileSync(process.env.PLANETSCALE_SSL_CERT_PATH),
+    },
 };
 
 const connection = mysql.createConnection(db_config);
