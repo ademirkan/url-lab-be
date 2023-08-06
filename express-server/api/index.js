@@ -5,17 +5,9 @@ const mysql = require("mysql2");
 const { v4 } = require("uuid");
 const fs = require("fs");
 
-const db_config = {
-    host: process.env.PLANETSCALE_DB_HOST,
-    user: process.env.PLANETSCALE_DB_USERNAME,
-    password: process.env.PLANETSCALE_DB_PASSWORD,
-    database: process.env.PLANETSCALE_DB,
-    ssl: {
-        ca: fs.readFileSync(process.env.PLANETSCALE_SSL_CERT_PATH),
-    },
-};
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
-const connection = mysql.createConnection(db_config);
+connection.connect();
 
 app.use(express.json()); // middleware to parse JSON request body
 
