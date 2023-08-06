@@ -22,26 +22,26 @@ app.get("/:id", (req, res) => {
             if (results.length === 0) {
                 return res.status(404).json({ error: "URL not found" });
             }
-            res.json({ url: results[0].url });
+            res.redirect({ url: results[0].url });
         }
     );
 });
 
 app.post("/create-url", (req, res) => {
     const { id, longUrl } = req.body;
-    if (!url) {
+    if (!longUrl) {
         return res.status(400).json({ error: "URL is required" });
     }
 
     connection.query(
         "INSERT INTO urls (id, url) VALUES (?, ?)",
-        [id, url],
+        [id, longUrl],
         (err, results) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({ error: "Internal Server Error" });
             }
-            res.redirect(url);
+            res.json({ id, longUrl });
         }
     );
 });
