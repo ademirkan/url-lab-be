@@ -37,7 +37,4 @@ app.post("/:url", (req, res) => {
     res.status(301).redirect(`https://www.amazon.com/${url}`);
 });
 
-// ONLY FOR TESTING
-app.listen(3001, () => console.log("Server running on port 3001"));
-
 module.exports = app;
