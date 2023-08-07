@@ -4,6 +4,7 @@ require("dotenv").config();
 const mysql = require("mysql2");
 const { v4 } = require("uuid");
 const cors = require("cors");
+import { ensureAbsoluteURL } from "../helpers";
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 connection.connect();
@@ -73,7 +74,7 @@ app.post("/create-url", (req, res) => {
     // Insert into table
     connection.query(
         "INSERT INTO urls (id, url) VALUES (?, ?)",
-        [id, url],
+        [id, ensureAbsoluteURL(url)],
         (err, results) => {
             if (err) {
                 console.error(err);
