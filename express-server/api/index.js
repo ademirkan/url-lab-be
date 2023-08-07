@@ -4,7 +4,7 @@ require("dotenv").config();
 const mysql = require("mysql2");
 const { v4 } = require("uuid");
 const cors = require("cors");
-import { ensureAbsoluteURL, generateId } from "../helpers";
+import { ensureAbsoluteURL, generateUniqueId } from "../helpers";
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 connection.connect();
@@ -52,6 +52,23 @@ app.post("/create-url", (req, res) => {
         return res.status(400).json({ error: "URL is required" });
     }
 
+    function insertIntoTable(id, url) {
+        // Insert into table
+        connection.query(
+            "INSERT INTO urls (id, url) VALUES (?, ?)",
+            [id, ensureAbsoluteURL(url)],
+            (err, results) => {
+                if (err) {
+                    console.error(err);
+                    return res
+                        .status(500)
+                        .json({ error: "Internal Server Error" });
+                }
+                res.json({ id, url });
+            }
+        );
+    }
+
     // Check if id is already in table
     if (id && id !== "") {
         connection.query(
@@ -67,24 +84,21 @@ app.post("/create-url", (req, res) => {
                 if (results.length > 0) {
                     return res.status(400).json({ error: "ID already exists" });
                 }
+                insertIntoTable(id, url);
             }
         );
     } else {
-        id = generateId(5);
-    }
-
-    // Insert into table
-    connection.query(
-        "INSERT INTO urls (id, url) VALUES (?, ?)",
-        [id, ensureAbsoluteURL(url)],
-        (err, results) => {
+        // create id of length 6 based on timestamp
+        let isUnique = false;
+        // while id exists in table, generate new id
+        generateUniqueId(connection, (err, id) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({ error: "Internal Server Error" });
             }
-            res.json({ id, url });
-        }
-    );
+        });
+        insertIntoTable(id, url);
+    }
 });
 
 module.exports = app;
