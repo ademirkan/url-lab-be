@@ -47,7 +47,7 @@ app.get("/:id", (req, res) => {
 });
 
 app.post("/create-url", (req, res) => {
-    const { id, url } = req.body;
+    let { id, url } = req.body;
     if (!url) {
         return res.status(400).json({ error: "URL is required" });
     }
