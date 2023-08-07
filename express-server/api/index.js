@@ -9,7 +9,14 @@ const connection = mysql.createConnection(process.env.DATABASE_URL);
 connection.connect();
 
 app.use(express.json()); // middleware to parse JSON request body
-app.use(cors());
+app.use(
+    cors({
+        origin: "*",
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+    })
+);
 
 app.get("/", (req, res) => {
     res.redirect("https://app.urllab.co/");
