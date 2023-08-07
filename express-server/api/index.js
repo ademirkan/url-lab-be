@@ -11,6 +11,9 @@ connection.connect();
 app.use(express.json()); // middleware to parse JSON request body
 app.use(cors());
 
+app.get("/", (req, res) => {
+    res.redirect("https://app.urllab.co/");
+});
 app.get("/:id", (req, res) => {
     const { id } = req.params;
     connection.query(
