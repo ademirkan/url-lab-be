@@ -53,7 +53,7 @@ app.post("/create-url", (req, res) => {
     }
 
     // Check if id is already in table
-    if (id || id === "") {
+    if (id && id !== "") {
         connection.query(
             "SELECT url FROM urls WHERE id = ?",
             [id],
