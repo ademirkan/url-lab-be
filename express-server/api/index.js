@@ -18,6 +18,10 @@ app.use(
     })
 );
 
+app.options("/create-url", (req, res) => {
+    res.sendStatus(200);
+});
+
 app.get("/", (req, res) => {
     res.redirect("https://app.urllab.co/");
 });
