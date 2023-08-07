@@ -3,11 +3,13 @@ const app = express();
 require("dotenv").config();
 const mysql = require("mysql2");
 const { v4 } = require("uuid");
+const cors = require("cors");
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 connection.connect();
 
 app.use(express.json()); // middleware to parse JSON request body
+app.use(cors());
 
 app.get("/:id", (req, res) => {
     const { id } = req.params;
