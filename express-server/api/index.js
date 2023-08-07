@@ -22,8 +22,6 @@ app.get("/:id", (req, res) => {
             if (results.length === 0) {
                 return res.status(404).json({ error: "URL not found" });
             }
-            console.log(results[0]); // Check the entire row's data
-            console.log(results[0].url); // Check the URL specifically
 
             res.redirect(results[0].url);
         }
@@ -31,20 +29,40 @@ app.get("/:id", (req, res) => {
 });
 
 app.post("/create-url", (req, res) => {
-    const { id, longUrl } = req.body;
-    if (!longUrl) {
+    const { id, url } = req.body;
+    if (!url) {
         return res.status(400).json({ error: "URL is required" });
     }
 
+    // Check if id is already in table
+    if (id) {
+        connection.query(
+            "SELECT url FROM urls WHERE id = ?",
+            [id],
+            (err, results) => {
+                if (err) {
+                    console.error(err);
+                    return res
+                        .status(500)
+                        .json({ error: "Internal Server Error" });
+                }
+                if (results.length > 0) {
+                    return res.status(400).json({ error: "ID already exists" });
+                }
+            }
+        );
+    }
+
+    // Insert into table
     connection.query(
         "INSERT INTO urls (id, url) VALUES (?, ?)",
-        [id, longUrl],
+        [id, url],
         (err, results) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({ error: "Internal Server Error" });
             }
-            res.json({ id, longUrl });
+            res.json({ id, url });
         }
     );
 });
