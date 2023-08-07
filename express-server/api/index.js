@@ -70,27 +70,7 @@ app.post("/create-url", (req, res) => {
             }
         );
     } else {
-        // create id of length 6 based on timestamp
-        let isUnique = false;
-        // while id exists in table, generate new id
-        do {
-            id = generateId(5);
-            connection.query(
-                "SELECT url FROM urls WHERE id = ?",
-                [id],
-                (err, results) => {
-                    if (err) {
-                        console.error(err);
-                        return res
-                            .status(500)
-                            .json({ error: "Internal Server Error" });
-                    }
-                    if (results.length == 0) {
-                        isUnique = true;
-                    }
-                }
-            );
-        } while (!isUnique);
+        id = generateId(5);
     }
 
     // Insert into table
