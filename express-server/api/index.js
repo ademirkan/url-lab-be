@@ -96,8 +96,8 @@ app.post("/create-url", (req, res) => {
                 console.error(err);
                 return res.status(500).json({ error: "Internal Server Error" });
             }
+            insertIntoTable(id, url);
         });
-        insertIntoTable(id, url);
     }
 });
 
